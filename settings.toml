@@ -1,2 +1,4 @@
+pipefy_url = "https://api.pipefy.com/graphql"
+
 [constants]
 user_agent="pipefy-sdk-python"

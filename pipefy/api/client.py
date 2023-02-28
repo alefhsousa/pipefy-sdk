@@ -16,7 +16,7 @@ class ApiClient:
         user_agent=f"{settings.constants.user_agent}/{__version__}",
     ):
         self.transport = RequestsHTTPTransport(
-            url=pipefy_url if pipefy_url else "https://api.pipefy.com/graphql",
+            url=pipefy_url if pipefy_url else settings.pipefy_url,
             verify=True,
             retries=3,
             headers={

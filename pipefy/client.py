@@ -8,5 +8,4 @@ class PipefyClient:
 
     @property
     def cards(self):
-        print("oi")
         return CardApi(self)

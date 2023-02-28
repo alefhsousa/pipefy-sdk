@@ -2,7 +2,7 @@ from pathlib import Path
 
 from dynaconf import Dynaconf
 
-PROJECT_ROOT = Path(__file__).parent.parent.resolve(strict=True).as_posix()
+PROJECT_ROOT = Path(__file__).resolve(strict=True).as_posix()
 
 settings = Dynaconf(
     root_path=PROJECT_ROOT,

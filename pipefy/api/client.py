@@ -4,8 +4,8 @@ from gql.transport.requests import RequestsHTTPTransport
 from returns.result import safe
 
 from .. import __version__
+from ..infrastructure.configuration.conf import settings
 from ..models.message import Message, MessageCategory
-from ..settings import settings
 
 
 class ApiClient:

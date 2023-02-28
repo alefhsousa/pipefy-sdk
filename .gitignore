@@ -1,6 +1,6 @@
 
 # Ignore dynaconf secret files
-.secrets.*
+pipefy/infrastructure/configuration/.secrets.toml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,8 +1,30 @@
 [tool.poetry]
-name = "pipefy-sdk"
+name = "pipefy"
 version = "0.1.0"
-description = "Python sdk to use the pipefy api"
+description = "Pipefy SDK for Python"
 authors = ["Alefh Sousa <oi@alefh.com>"]
+readme = "README.md"
+keywords = ["pipefy", "graphql", "pipefy SDK", "pipefy graphql SDK"]
+license = "MIT"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
+repository = "https://github.com/alefhsousa/pipefy-sdk.git"
+homepage = "https://github.com/alefhsousa/pipefy-sdk"
+
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -19,14 +41,9 @@ black = "22.12.0"
 mypy = "^1.0.1"
 
 [build-system]
-requires = ["poetry-core>=1.5.1"]
+requires = ["poetry>=1.2.0"]
 build-backend = "poetry.core.masonry.api"
-
-
-packages = [
-    { include = "pipefy-sdk", from = "pipefy" },
-]
 
 [tool.black]
 line-length = 100
-target-version = ['py38']
+target-version = ['py36', 'py37', 'py38']

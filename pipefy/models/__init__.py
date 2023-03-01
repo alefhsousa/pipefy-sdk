@@ -24,3 +24,7 @@ class DictWrapper:
     def raw_data(self) -> Dict[str, Any]:
         """The original raw dict"""
         return self._data
+
+    def parse(self, mapping, parse_function=None):
+        print("start mapping")
+        return self

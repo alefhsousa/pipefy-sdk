@@ -33,6 +33,7 @@ gql = "^3.4.0"
 requests = "^2.28.2"
 requests-toolbelt = "^0.10.1"
 dynaconf = "^3.1.11"
+jmespath = "^1.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

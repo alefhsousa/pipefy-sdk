@@ -1,4 +1,5 @@
 from typing import Dict, Any
+from returns.result import safe
 
 from pipefy.models import DictWrapper
 
@@ -14,11 +15,19 @@ class PipefyCardResponse(DictWrapper):
 
     @property
     def created_by(self) -> str:
-        return self["card"]["createdBy"]["email"]
+        return self["card"].get("createdBy", {}).get("email")
 
     @property
     def fields_by_uuid(self) -> Dict[str, Any]:
-        return {k["field"]["uuid"]: k.get("native_value") for k in self["card"]["fields"]}
+        return {
+            k.get("field", {}).get("uuid"): k.get("native_value")
+            for k in self["card"].get("fields", [])
+        }
 
     def __eq__(self, other):
         return self.raw_data == other.raw_data
+
+    @safe
+    def parse(self, mapping, parse_function=None):
+        data = {mapping.get(k, {}).get("key"): v for k, v in self.fields_by_uuid.items()}
+        return DictWrapper(dict(original_data=self.raw_data, parsed_data=data))

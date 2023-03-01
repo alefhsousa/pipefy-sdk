@@ -161,6 +161,14 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
+name = "jmespath"
+version = "1.0.1"
+description = "JSON Matching Expressions"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "more-itertools"
 version = "9.1.0"
 description = "More routines for operating on iterables, beyond itertools"
@@ -428,7 +436,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "c88f5aacd215d97aded4b2d8646fe75444f97532c643f1fcf6470b219c9bb3c7"
+content-hash = "480539913444dca190271b0e04e3ce12a9eb76e84ad826b25f618581adc411a1"
 
 [metadata.files]
 atomicwrites = []
@@ -444,6 +452,7 @@ dynaconf = []
 gql = []
 graphql-core = []
 idna = []
+jmespath = []
 more-itertools = []
 multidict = []
 mypy = []

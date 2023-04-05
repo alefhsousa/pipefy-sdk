@@ -11,10 +11,24 @@ default_load_card_query = """
               card(id: $id) {
                 age
                 id
+                title
+                finished_at
                 createdAt
+                updated_at
                 createdBy {
                   displayName
                   email
+                }
+                pipe {
+                  id
+                  description
+                  title_field {
+                    label
+                    id
+                    internal_id
+                  }
+                  color
+                  name
                 }
                 fields {
                   name

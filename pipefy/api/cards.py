@@ -11,6 +11,7 @@ default_load_card_query = """
               card(id: $id) {
                 age
                 id
+                suid
                 title
                 finished_at
                 createdAt
@@ -21,6 +22,8 @@ default_load_card_query = """
                 }
                 pipe {
                   id
+                  suid
+                  uuid
                   description
                   title_field {
                     label

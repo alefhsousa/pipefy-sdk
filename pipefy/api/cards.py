@@ -140,7 +140,7 @@ class CardApi(BaseClient):
     def create_with_phase_id(self, pipe_id: str, phase_id: str, title: Optional[str] = None, fields: Optional[List[Dict[str, Any]]] = None,
                identifier: Optional[str] = None,
                mutation: Optional[str] = None):
-        mutation = mutation or create_card_mutation
+        mutation = mutation or create_card_with_phase_id_mutation
         identifier = identifier or str(uuid.uuid4())
         return self.client.api.fetch_data(
             gql(mutation), dict(pipe_id=pipe_id, fields=fields, phase_id=phase_id, title=title, identifier=identifier)

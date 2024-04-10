@@ -117,6 +117,14 @@ create_card_with_phase_id_mutation = """
     }
 """
 
+delete_card_mutation = """
+    mutation deleteCard($card_id: ID!, $identifier: String){
+      deleteCard(input: {id: $card_id, clientMutationId: $identifier}) {
+        success
+      }
+    }
+"""
+
 
 class CardApi(BaseClient):
 
@@ -137,6 +145,13 @@ class CardApi(BaseClient):
         return self.client.api.fetch_data(
             gql(mutation), dict(pipe_id=pipe_id, fields=fields, phase_id=phase_id, title=title, identifier=identifier)
         )
+
+    def delete(self, card_id: str, identifier: Optional[str] = None, mutation: Optional[str] = None):
+        mutation = mutation or delete_card_mutation
+        identifier = identifier or str(uuid.uuid4())
+        return self.client.api.fetch_data(
+            gql(mutation), dict(card_id=card_id, identifier=identifier)
+    )
 
     def load_card(self, card_id: str, query: Optional[str] = None):
         query = query or default_load_card_query

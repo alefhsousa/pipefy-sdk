@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from returns.result import safe
 
 from pipefy.models import DictWrapper
@@ -30,6 +30,22 @@ class PipefyCardResponse(DictWrapper):
             k.get("field", {}).get("id"): k.get("value")
             for k in self["card"].get("fields", [])
         }
+
+    @property
+    def current_phase(self) -> Dict[str, Any]:
+        return self.get("card", {}).get("current_phase", {})
+
+    @property
+    def current_phase_id(self) -> Optional[int]:
+        possible_id = self.current_phase.get("id")
+        if possible_id is not None:
+            return int(possible_id)
+        return possible_id
+
+    @property
+    def current_phase_name(self) -> Optional[str]:
+        return self.current_phase.get("name")
+
 
     def __eq__(self, other):
         return self.raw_data == other.raw_data

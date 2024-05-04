@@ -133,6 +133,10 @@ get_all_cards_from_pipe_query = """
                     nodes {
                       id
                       age
+                      current_phase {
+                        id
+                        name
+                      }
                       fields {
                         field {
                             id

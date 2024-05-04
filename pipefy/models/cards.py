@@ -24,6 +24,13 @@ class PipefyCardResponse(DictWrapper):
             for k in self["card"].get("fields", [])
         }
 
+    @property
+    def fields_by_id(self) -> Dict[str, Any]:
+        return {
+            k.get("field", {}).get("id"): k.get("value")
+            for k in self["card"].get("fields", [])
+        }
+
     def __eq__(self, other):
         return self.raw_data == other.raw_data
 

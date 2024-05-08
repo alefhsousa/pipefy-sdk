@@ -158,6 +158,49 @@ get_all_cards_from_pipe_query = """
             """
 
 
+update_card_labels_mutation = """
+        mutation addCardLabels($card_id: ID!, $label_ids: [ID]!) {
+          updateCard(input: { id: $card_id, label_ids: $label_ids }) {
+            card {
+                age
+                  fields {
+                    value
+                    field {
+                      id
+                    }
+                  }
+                current_phase {
+                    name
+                    id
+                }
+            }
+            clientMutationId
+          } 
+        }
+"""
+
+update_card_field_mutation = """
+        mutation mutation updateCardField($card_id: ID!, $field_id: ID!, $value: [UndefinedInput]) {
+          updateCardField(input: { card_id: $card_id, field_id: $field_id, new_value: $value}) {
+            card {
+                age
+                  fields {
+                    value
+                    field {
+                      id
+                    }
+                  }
+                current_phase {
+                    name
+                    id
+                }
+            }
+            clientMutationId
+          } 
+        }
+"""
+
+
 class CardApi(BaseClient):
     def create(
         self,
@@ -236,6 +279,46 @@ class CardApi(BaseClient):
             gql(mutation), dict(card_id=card_id, comment=comment, identifier=identifier)
         )
 
+    def get_all_cards_from_pipe(
+        self,
+        pipe_id: str,
+        cursor: Optional[str] = None,
+        accumulator: Optional[List[Dict]] = None,
+        query: Optional[str] = None,
+    ):
+        query = query or get_all_cards_from_pipe_query
+        acc_data = accumulator or list()
+        dados = (
+            self.client.api.fetch_data(gql(query), {"pipeId": pipe_id, "nextCursor": cursor})
+            .map(lambda r: self.parse_data(r))
+            .map(lambda r: self._add_pipe_id(r, pipe_id))
+            .map(lambda r: self._accumulate_data(r, acc_data))
+            .map(lambda r: self._fetch_possible_next_page(r))
+        )
+
+        if is_successful(dados):
+            data = dados.unwrap()
+            if data["has_next_page"]:
+                return self.get_all_cards_from_pipe(
+                    data["pipe_id"], accumulator=data["accumulator"], cursor=data["endCursor"]
+                )
+            return Success(data['accumulator'])
+
+        return dados
+
+    def upsert_label_cards(
+        self,
+        card_id: str,
+        labels: List[str],
+        identifier: Optional[str] = None,
+        mutation: Optional[str] = None,
+    ):
+        mutation = mutation or update_card_labels_mutation
+        identifier = identifier or str(uuid.uuid4())
+        return self.client.api.fetch_data(
+            gql(mutation), dict(card_id=card_id, label_ids=labels, identifier=identifier)
+        )
+
     def parse_data(self, data: Dict[str, Any]):
         cards = [PipefyCardResponse({'card': card}) for card in data["allCards"]["nodes"]]
         return {"response": data, "parsed_cards": cards}
@@ -267,30 +350,3 @@ class CardApi(BaseClient):
     def _add_pipe_id(self, data: Dict[str, Any], pipe_id: str):
         data["pipe_id"] = pipe_id
         return data
-
-    def get_all_cards_from_pipe(
-        self,
-        pipe_id: str,
-        cursor: Optional[str] = None,
-        accumulator: Optional[List[Dict]] = None,
-        query: Optional[str] = None,
-    ):
-        query = query or get_all_cards_from_pipe_query
-        acc_data = accumulator or list()
-        dados = (
-            self.client.api.fetch_data(gql(query), {"pipeId": pipe_id, "nextCursor": cursor})
-            .map(lambda r: self.parse_data(r))
-            .map(lambda r: self._add_pipe_id(r, pipe_id))
-            .map(lambda r: self._accumulate_data(r, acc_data))
-            .map(lambda r: self._fetch_possible_next_page(r))
-        )
-
-        if is_successful(dados):
-            data = dados.unwrap()
-            if data["has_next_page"]:
-                return self.get_all_cards_from_pipe(
-                    data["pipe_id"], accumulator=data["accumulator"], cursor=data["endCursor"]
-                )
-            return Success(data['accumulator'])
-
-        return dados

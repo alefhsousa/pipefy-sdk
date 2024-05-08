@@ -180,7 +180,7 @@ update_card_labels_mutation = """
 """
 
 update_card_field_mutation = """
-        mutation mutation updateCardField($card_id: ID!, $field_id: ID!, $value: [UndefinedInput]) {
+        mutation updateCardField($card_id: ID!, $field_id: ID!, $value: [UndefinedInput]) {
           updateCardField(input: { card_id: $card_id, field_id: $field_id, new_value: $value}) {
             card {
                 age
@@ -318,6 +318,21 @@ class CardApi(BaseClient):
         return self.client.api.fetch_data(
             gql(mutation), dict(card_id=card_id, label_ids=labels, identifier=identifier)
         )
+
+    def update_card_field(
+        self,
+        card_id: str,
+        field_id: str,
+        value: str,
+        identifier: Optional[str] = None,
+        mutation: Optional[str] = None,
+    ):
+        mutation = mutation or update_card_field_mutation
+        identifier = identifier or str(uuid.uuid4())
+        return self.client.api.fetch_data(
+            gql(mutation), dict(card_id=card_id, field_id=field_id, value=value, identifier=identifier)
+        )
+
 
     def parse_data(self, data: Dict[str, Any]):
         cards = [PipefyCardResponse({'card': card}) for card in data["allCards"]["nodes"]]

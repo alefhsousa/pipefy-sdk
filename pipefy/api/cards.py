@@ -62,7 +62,6 @@ move_card_to_phase_mutation = """
     }
 """
 
-
 create_card_comment_mutation = """
     mutation createComment($card_id: ID!, $comment: String!, $identifier: String) {
   createComment(input: {
@@ -157,7 +156,6 @@ get_all_cards_from_pipe_query = """
             }
             """
 
-
 update_card_labels_mutation = """
         mutation addCardLabels($card_id: ID!, $label_ids: [ID]!) {
           updateCard(input: { id: $card_id, label_ids: $label_ids }) {
@@ -200,15 +198,29 @@ update_card_field_mutation = """
         }
 """
 
+update_fields_from_card_mutation = """
+                                mutation updateManyFields($card_id: ID!, $values: [NodeFieldValueInput!]!) {
+                                    updateFieldsValues(input: { nodeId: $card_id, values: $values }) {
+                                      clientMutationId
+                                    success
+                                    updatedNode
+                                    userErrors {
+                                      field
+                                      message
+                                    }
+                                    }
+                                }
+"""
+
 
 class CardApi(BaseClient):
     def create(
-        self,
-        pipe_id: str,
-        title: Optional[str] = None,
-        fields: Optional[List[Dict[str, Any]]] = None,
-        identifier: Optional[str] = None,
-        mutation: Optional[str] = None,
+            self,
+            pipe_id: str,
+            title: Optional[str] = None,
+            fields: Optional[List[Dict[str, Any]]] = None,
+            identifier: Optional[str] = None,
+            mutation: Optional[str] = None,
     ):
         mutation = mutation or create_card_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -217,13 +229,13 @@ class CardApi(BaseClient):
         )
 
     def create_with_phase_id(
-        self,
-        pipe_id: str,
-        phase_id: str,
-        title: Optional[str] = None,
-        fields: Optional[List[Dict[str, Any]]] = None,
-        identifier: Optional[str] = None,
-        mutation: Optional[str] = None,
+            self,
+            pipe_id: str,
+            phase_id: str,
+            title: Optional[str] = None,
+            fields: Optional[List[Dict[str, Any]]] = None,
+            identifier: Optional[str] = None,
+            mutation: Optional[str] = None,
     ):
         mutation = mutation or create_card_with_phase_id_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -239,7 +251,7 @@ class CardApi(BaseClient):
         )
 
     def delete(
-        self, card_id: str, identifier: Optional[str] = None, mutation: Optional[str] = None
+            self, card_id: str, identifier: Optional[str] = None, mutation: Optional[str] = None
     ):
         mutation = mutation or delete_card_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -254,11 +266,11 @@ class CardApi(BaseClient):
         )
 
     def move_to_phase(
-        self,
-        card_id: str,
-        phase_id: str,
-        identifier: Optional[str] = None,
-        mutation: Optional[str] = None,
+            self,
+            card_id: str,
+            phase_id: str,
+            identifier: Optional[str] = None,
+            mutation: Optional[str] = None,
     ):
         mutation = mutation or move_card_to_phase_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -267,11 +279,11 @@ class CardApi(BaseClient):
         )
 
     def create_comment(
-        self,
-        card_id: str,
-        comment: str,
-        identifier: Optional[str] = None,
-        mutation: Optional[str] = None,
+            self,
+            card_id: str,
+            comment: str,
+            identifier: Optional[str] = None,
+            mutation: Optional[str] = None,
     ):
         mutation = mutation or create_card_comment_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -280,11 +292,11 @@ class CardApi(BaseClient):
         )
 
     def get_all_cards_from_pipe(
-        self,
-        pipe_id: str,
-        cursor: Optional[str] = None,
-        accumulator: Optional[List[Dict]] = None,
-        query: Optional[str] = None,
+            self,
+            pipe_id: str,
+            cursor: Optional[str] = None,
+            accumulator: Optional[List[Dict]] = None,
+            query: Optional[str] = None,
     ):
         query = query or get_all_cards_from_pipe_query
         acc_data = accumulator or list()
@@ -307,11 +319,11 @@ class CardApi(BaseClient):
         return dados
 
     def upsert_label_cards(
-        self,
-        card_id: str,
-        labels: List[str],
-        identifier: Optional[str] = None,
-        mutation: Optional[str] = None,
+            self,
+            card_id: str,
+            labels: List[str],
+            identifier: Optional[str] = None,
+            mutation: Optional[str] = None,
     ):
         mutation = mutation or update_card_labels_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -320,12 +332,12 @@ class CardApi(BaseClient):
         )
 
     def update_card_field(
-        self,
-        card_id: str,
-        field_id: str,
-        value: str,
-        identifier: Optional[str] = None,
-        mutation: Optional[str] = None,
+            self,
+            card_id: str,
+            field_id: str,
+            value: str,
+            identifier: Optional[str] = None,
+            mutation: Optional[str] = None,
     ):
         mutation = mutation or update_card_field_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -333,6 +345,18 @@ class CardApi(BaseClient):
             gql(mutation), dict(card_id=card_id, field_id=field_id, value=value, identifier=identifier)
         )
 
+    def update_card_fields(
+            self,
+            card_id: str,
+            field_values: [Dict[str, Any]],
+            identifier: Optional[str] = None,
+            mutation: Optional[str] = None,
+    ):
+        mutation = mutation or update_fields_from_card_mutation
+        identifier = identifier or str(uuid.uuid4())
+        return self.client.api.fetch_data(
+            gql(mutation), dict(card_id=card_id, values=field_values, identifier=identifier)
+        )
 
     def parse_data(self, data: Dict[str, Any]):
         cards = [PipefyCardResponse({'card': card}) for card in data["allCards"]["nodes"]]

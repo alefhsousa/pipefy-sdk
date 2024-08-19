@@ -1,3 +1,3 @@
-from tests.fixtures import Fixtures
-
-fixtures = Fixtures()
+# from tests.fixtures import Fixtures
+#
+# fixtures = Fixtures()

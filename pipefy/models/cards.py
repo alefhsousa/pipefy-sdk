@@ -27,8 +27,7 @@ class PipefyCardResponse(DictWrapper):
     @property
     def fields_by_id(self) -> Dict[str, Any]:
         return {
-            k.get("field", {}).get("id"): k.get("value")
-            for k in self["card"].get("fields", [])
+            k.get("field", {}).get("id"): k.get("value") for k in self["card"].get("fields", [])
         }
 
     @property
@@ -45,7 +44,6 @@ class PipefyCardResponse(DictWrapper):
     @property
     def current_phase_name(self) -> Optional[str]:
         return self.current_phase.get("name")
-
 
     def __eq__(self, other):
         return self.raw_data == other.raw_data

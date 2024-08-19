@@ -215,12 +215,12 @@ update_fields_from_card_mutation = """
 
 class CardApi(BaseClient):
     def create(
-            self,
-            pipe_id: str,
-            title: Optional[str] = None,
-            fields: Optional[List[Dict[str, Any]]] = None,
-            identifier: Optional[str] = None,
-            mutation: Optional[str] = None,
+        self,
+        pipe_id: str,
+        title: Optional[str] = None,
+        fields: Optional[List[Dict[str, Any]]] = None,
+        identifier: Optional[str] = None,
+        mutation: Optional[str] = None,
     ):
         mutation = mutation or create_card_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -229,13 +229,13 @@ class CardApi(BaseClient):
         )
 
     def create_with_phase_id(
-            self,
-            pipe_id: str,
-            phase_id: str,
-            title: Optional[str] = None,
-            fields: Optional[List[Dict[str, Any]]] = None,
-            identifier: Optional[str] = None,
-            mutation: Optional[str] = None,
+        self,
+        pipe_id: str,
+        phase_id: str,
+        title: Optional[str] = None,
+        fields: Optional[List[Dict[str, Any]]] = None,
+        identifier: Optional[str] = None,
+        mutation: Optional[str] = None,
     ):
         mutation = mutation or create_card_with_phase_id_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -251,7 +251,7 @@ class CardApi(BaseClient):
         )
 
     def delete(
-            self, card_id: str, identifier: Optional[str] = None, mutation: Optional[str] = None
+        self, card_id: str, identifier: Optional[str] = None, mutation: Optional[str] = None
     ):
         mutation = mutation or delete_card_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -266,11 +266,11 @@ class CardApi(BaseClient):
         )
 
     def move_to_phase(
-            self,
-            card_id: str,
-            phase_id: str,
-            identifier: Optional[str] = None,
-            mutation: Optional[str] = None,
+        self,
+        card_id: str,
+        phase_id: str,
+        identifier: Optional[str] = None,
+        mutation: Optional[str] = None,
     ):
         mutation = mutation or move_card_to_phase_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -279,11 +279,11 @@ class CardApi(BaseClient):
         )
 
     def create_comment(
-            self,
-            card_id: str,
-            comment: str,
-            identifier: Optional[str] = None,
-            mutation: Optional[str] = None,
+        self,
+        card_id: str,
+        comment: str,
+        identifier: Optional[str] = None,
+        mutation: Optional[str] = None,
     ):
         mutation = mutation or create_card_comment_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -292,11 +292,11 @@ class CardApi(BaseClient):
         )
 
     def get_all_cards_from_pipe(
-            self,
-            pipe_id: str,
-            cursor: Optional[str] = None,
-            accumulator: Optional[List[Dict]] = None,
-            query: Optional[str] = None,
+        self,
+        pipe_id: str,
+        cursor: Optional[str] = None,
+        accumulator: Optional[List[Dict]] = None,
+        query: Optional[str] = None,
     ):
         query = query or get_all_cards_from_pipe_query
         acc_data = accumulator or list()
@@ -312,18 +312,21 @@ class CardApi(BaseClient):
             data = dados.unwrap()
             if data["has_next_page"]:
                 return self.get_all_cards_from_pipe(
-                    data["pipe_id"], accumulator=data["accumulator"], cursor=data["endCursor"]
+                    data["pipe_id"],
+                    accumulator=data["accumulator"],
+                    cursor=data["endCursor"],
+                    query=query,
                 )
-            return Success(data['accumulator'])
+            return Success(data["accumulator"])
 
         return dados
 
     def upsert_label_cards(
-            self,
-            card_id: str,
-            labels: List[str],
-            identifier: Optional[str] = None,
-            mutation: Optional[str] = None,
+        self,
+        card_id: str,
+        labels: List[str],
+        identifier: Optional[str] = None,
+        mutation: Optional[str] = None,
     ):
         mutation = mutation or update_card_labels_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -332,25 +335,26 @@ class CardApi(BaseClient):
         )
 
     def update_card_field(
-            self,
-            card_id: str,
-            field_id: str,
-            value: str,
-            identifier: Optional[str] = None,
-            mutation: Optional[str] = None,
+        self,
+        card_id: str,
+        field_id: str,
+        value: str,
+        identifier: Optional[str] = None,
+        mutation: Optional[str] = None,
     ):
         mutation = mutation or update_card_field_mutation
         identifier = identifier or str(uuid.uuid4())
         return self.client.api.fetch_data(
-            gql(mutation), dict(card_id=card_id, field_id=field_id, value=value, identifier=identifier)
+            gql(mutation),
+            dict(card_id=card_id, field_id=field_id, value=value, identifier=identifier),
         )
 
     def update_card_fields(
-            self,
-            card_id: str,
-            field_values: [Dict[str, Any]],
-            identifier: Optional[str] = None,
-            mutation: Optional[str] = None,
+        self,
+        card_id: str,
+        field_values: [Dict[str, Any]],
+        identifier: Optional[str] = None,
+        mutation: Optional[str] = None,
     ):
         mutation = mutation or update_fields_from_card_mutation
         identifier = identifier or str(uuid.uuid4())
@@ -359,7 +363,7 @@ class CardApi(BaseClient):
         )
 
     def parse_data(self, data: Dict[str, Any]):
-        cards = [PipefyCardResponse({'card': card}) for card in data["allCards"]["nodes"]]
+        cards = [PipefyCardResponse({"card": card}) for card in data["allCards"]["nodes"]]
         return {"response": data, "parsed_cards": cards}
 
     def _fetch_possible_next_page(self, data: Dict[str, Any]):
@@ -377,14 +381,6 @@ class CardApi(BaseClient):
         accumulator += data["parsed_cards"]
         data["accumulator"] = accumulator
         return data
-
-    def _call_function_if_has_next_page(self, data: Dict[str, Any]):
-        if data["has_next_page"]:
-            return self.get_all_cards_from_pipe(
-                data["pipe_id"], accumulator=data["accumulator"], cursor=data["endCursor"]
-            )
-
-        return Success(data)
 
     def _add_pipe_id(self, data: Dict[str, Any], pipe_id: str):
         data["pipe_id"] = pipe_id

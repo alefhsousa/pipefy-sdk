@@ -213,6 +213,21 @@ update_fields_from_card_mutation = """
 """
 
 
+update_card_label_ids_mutation = """
+                                mutation updateCardLabels($card_id: ID!, $label_ids: [ID!], $identifier: String) {
+                                  updateCard(input: {
+                                    id: $card_id,
+                                    label_ids: $label_ids
+                                    clientMutationId: $identifier
+                                  }) {
+                                    card {
+                                      id
+                                      age
+                                    }
+                                  }
+                                }
+"""
+
 class CardApi(BaseClient):
     def create(
         self,
@@ -360,6 +375,19 @@ class CardApi(BaseClient):
         identifier = identifier or str(uuid.uuid4())
         return self.client.api.fetch_data(
             gql(mutation), dict(card_id=card_id, values=field_values, identifier=identifier)
+        )
+
+    def update_card_labels(
+        self,
+        card_id: str,
+        label_ids: [int],
+        identifier: Optional[str] = None,
+        mutation: Optional[str] = None,
+    ):
+        mutation = mutation or update_card_label_ids_mutation
+        identifier = identifier or str(uuid.uuid4())
+        return self.client.api.fetch_data(
+            gql(mutation), dict(card_id=card_id, label_ids=label_ids, identifier=identifier)
         )
 
     def parse_data(self, data: Dict[str, Any]):

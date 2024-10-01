@@ -144,6 +144,12 @@ get_all_cards_from_pipe_query = """
                             index
                         }
                         value
+                        assignee_values {
+                            username
+                            displayName
+                            email
+                            intercomId                     
+                          }
                       }
 
                     }
@@ -165,6 +171,12 @@ update_card_labels_mutation = """
                     value
                     field {
                       id
+                    }
+                    assignee_values {
+                        username
+                        displayName
+                        email
+                        intercomId 
                     }
                   }
                 current_phase {

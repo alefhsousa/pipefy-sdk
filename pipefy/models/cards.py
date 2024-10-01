@@ -31,6 +31,12 @@ class PipefyCardResponse(DictWrapper):
         }
 
     @property
+    def fields_by_id_raw(self) -> Dict[str, Any]:
+        return {
+            k.get("field", {}).get("id"): k for k in self["card"].get("fields", [])
+        }
+
+    @property
     def current_phase(self) -> Dict[str, Any]:
         return self.get("card", {}).get("current_phase", {})
 

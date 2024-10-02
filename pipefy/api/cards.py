@@ -149,7 +149,18 @@ get_all_cards_from_pipe_query = """
                             displayName
                             email
                             intercomId                     
-                          }
+                        }
+                        connected_repo_items {
+                            ... on TableRecord {
+                              id
+                              record_fields {
+                                name
+                                value
+                                updated_at
+                                filled_at
+                              }
+                            }
+                        }
                       }
 
                     }

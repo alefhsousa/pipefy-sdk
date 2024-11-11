@@ -43,6 +43,23 @@ default_load_card_query = """
                   }
                   value
                   native_value
+                  assignee_values {
+                            username
+                            displayName
+                            email
+                            intercomId                     
+                        }
+                        connected_repo_items {
+                            ... on TableRecord {
+                              id
+                              record_fields {
+                                name
+                                value
+                                updated_at
+                                filled_at
+                              }
+                            }
+                        }
                 }
               }
             }

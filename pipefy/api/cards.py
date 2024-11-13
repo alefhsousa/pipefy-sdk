@@ -18,6 +18,15 @@ default_load_card_query = """
                 finished_at
                 createdAt
                 updated_at
+                current_phase {
+                  id
+                  name
+                  name
+                  cards_can_be_moved_to_phases {
+                    id
+                    name
+                  }
+                }
                 createdBy {
                   displayName
                   email
@@ -31,6 +40,10 @@ default_load_card_query = """
                     label
                     id
                     internal_id
+                  }
+                  phases {
+                    id
+                    name
                   }
                   color
                   name

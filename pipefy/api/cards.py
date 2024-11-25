@@ -21,7 +21,10 @@ default_load_card_query = """
                 current_phase {
                   id
                   name
-                  name
+                  fields {
+                    label
+                    id
+                  }
                   cards_can_be_moved_to_phases {
                     id
                     name

@@ -281,6 +281,7 @@ update_card_label_ids_mutation = """
                                 }
 """
 
+
 class CardApi(BaseClient):
     def create(
         self,
